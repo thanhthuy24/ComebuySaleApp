@@ -1,0 +1,29 @@
+<nav class="navbar navbar-expand-sm bg-light navbar-light">
+    <div class="container-fluid">
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link active" href="#">
+                    <img src="https://theme.hstatic.net/200000421745/1000900421/14/logo__footer.png?v=152"/>
+                </a>
+            </li>
+
+            <div class="header-mg">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Giới thiệu</a>
+                </li>
+            </div>
+            {% for c in categories %}
+            <div class="header-mg">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">{{c.name}}</a>
+                </li>
+            </div>
+            {% endfor %}
+
+        </ul>
+        <form class="d-flex" method="get" action="/">
+        <input class="form-control me-2" type="text" name="kw" placeholder="Search">
+        <button class="btn btn-primary" type="submit">Search</button>
+      </form>
+    </div>
+</nav>
