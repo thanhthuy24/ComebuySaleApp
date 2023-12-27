@@ -1,26 +1,28 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, Enum, Boolean, DateTime
 from sqlalchemy.orm import relationship
-
+from flask_login import UserMixin
 from app import db, app
+import enum
+from datetime import datetime
 
 
-#tạo class trong gói enum
-# class UserRoleEnum(enum.Enum):
-#     ADMIN = 1,
-#     USER = 2
+# tạo class trong gói enum
+class UserRoleEnum(enum.Enum):
+    ADMIN = 1,
+    USER = 2
 
-# class User(db.Model, UserMixin):
-#     id = Column(Integer, primary_key=True, autoincrement=True),
-#     name = Column(String(100), nullable=False, unique=True),
-#     username = Column(String(100), nullable=False, unique=True),
-#     password = Column(String(100), nullable=False)
-#
+class User(db.Model, UserMixin):
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(100), nullable=False, unique=True)
+    username = Column(String(100), nullable=False, unique=True)
+    password = Column(String(100), nullable=False)
+
 #     #user thường đăng kí
-#     user_role = Column(Enum(UserRoleEnum), default=UserRoleEnum.USER)
-#
+    user_role = Column(Enum(UserRoleEnum), default=UserRoleEnum.USER)
+    receipts = relationship('Receipt', backref='user', lazy=True)
 #     #ghi đè
-#     def __str__(self):
-#         return self.name
+    def __str__(self):
+        return self.name
 class Category(db.Model): #db.Model là kế thừa
     __tablename__ = 'category'
 
@@ -28,10 +30,10 @@ class Category(db.Model): #db.Model là kế thừa
     name = Column(String(50), nullable=False, unique=True)
     # tạo mối quan hệ vs product => đặt product trong nháy để khi máy dịch,
     # chạy qua product bên dưới rồi mới nhận biết product bên trong relationship'product'
-    # products = relationship('Product', backref='category', lazy=True)
+    products = relationship('Product', backref='category', lazy=True)
 
-    # def __str__(self):
-    #     return self.name
+    def __str__(self):
+        return self.name
 
 class Product(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -40,22 +42,49 @@ class Product(db.Model):
     category_id = Column(Integer, ForeignKey(Category.id), nullable=False)
     image = Column(String(200))
 
+    receipt_details = relationship('ReceiptDetails', backref='product', lazy=True)
 
-    # def __str__(self):
-    #     return self.name
+    def __str__(self):
+        return self.name
+
+class BaseModel(db.Model):
+    __abstract__ = True
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    active = Column(Boolean, default=True)
+    create_date = Column(DateTime)
+
+class Receipt(BaseModel):
+    user_id = Column(Integer, ForeignKey(User.id), nullable=True)
+    receipt_details = relationship('ReceiptDetails', backref='receipt', lazy=True)
+
+class ReceiptDetails(db.Model):
+    quantity = Column(Integer, default=0)
+    price = Column(Float, default=0)
+
+    #khoa ngoaij=
+    receipt_id = Column(Receipt, ForeignKey(Receipt.id), nullable=False)
+    product_id = Column(Product, ForeignKey(Product.id), nullable=False)
 
 if __name__ == '__main__':
     with app.app_context():
 
         db.create_all()
 
-        # c1 = Category(name='Trà Sữa')
-        # c2 = Category(name='Trà Tươi')
+        import hashlib
+        u = User(name='Admin', username='admin', password=str(hashlib.md5('123'.encode('utf-8')).hexdigest()),
+                 user_role=UserRoleEnum.ADMIN)
+        u1 = User(name='ThuyHo', username='thuy24', password=str(hashlib.md5('123'.encode('utf-8')).hexdigest()))
+        db.session.add(u)
+        db.session.commit()
         #
-        # db.session.add(c1)
-        # db.session.add(c2)
-        # db.session.commit()
-        #
+        c1 = Category(name='Trà Sữa')
+        c2 = Category(name='Trà Tươi')
+
+        db.session.add(c1)
+        db.session.add(c2)
+        db.session.commit()
+
         p1 = Product(name='Trà sữa Signature', price='53000', category_id=1,
                      image="https://product.hstatic.net/200000421745/product/ts_signature_da473adc7fcc4d1d8c4d6378adc1f114_large.png")
 
