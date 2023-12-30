@@ -1,14 +1,9 @@
-{% extends 'admin/master.html' %}
-{% block body %}
+{% extends 'layout/base.html' %}
 
+{% block content %}
+<h1 class="text-center text-info mt-1">ĐĂNG NHẬP NGƯỜI DÙNG</h1>
 
-{% if current_user.is_authenticated %}
-<h1 class="text-center text-success" >CHÀO MỪNG BẠN ĐẾN VỚI TRANG QUẢN TRỊ</h1>
-<h2 class="text-info">Chào {{ current_user.name }}!</h2>
-{% else %}
-<h1 class="text-center text-success" >Đăng nhập quản trị</h1>
-
-<form method="post" action="/admin/login">
+<form method="post" action="">
   <div class="mb-3 mt-3">
     <label for="username" class="form-label">Tên đăng nhập:</label>
     <input type="text" class="form-control" id="username" placeholder="Nhập tên đăng nhập" name="username">
@@ -19,7 +14,5 @@
   </div>
   <button type="submit" class="btn btn-primary">Đăng nhập</button>
 </form>
-
-{% endif %}
 
 {% endblock %}

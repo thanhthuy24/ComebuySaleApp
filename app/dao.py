@@ -1,6 +1,7 @@
 import hashlib
-from app.models import Category, Product, User
-from app import app
+from app.models import Category, Product, User, Receipt, ReceiptDetails
+from app import app, db
+from flask_login import current_user
 
 def get_categories():
     return Category.query.all()
@@ -33,3 +34,14 @@ def authe_user(username, password):
 
     return User.query.filter(User.username.__eq__(username),
                              User.password.__eq__(password)).first()
+
+def add_receipt(cart):
+    if cart:
+        receipt = Receipt(user=current_user) #user=... => la backref
+        db.session.add(receipt)
+
+        for c in cart.values():
+            d = ReceiptDetails(quantity=c['quantity'], price=c['price'], product_id=c['id'], receipt=receipt)
+            db.session.add(d)
+
+        db.session.commit()

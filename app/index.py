@@ -3,7 +3,7 @@ import math
 from flask import render_template, request, redirect, jsonify, session
 from app import app, login
 import dao, utils
-from flask_login import login_user
+from flask_login import login_user, logout_user
 
 @app.route('/') #can co cau lenh from App import app moi su dung duoc
 def index():
@@ -99,6 +99,30 @@ def delete_cart(product_id):
 @app.route('/cart')
 def cart():
     return render_template('cart.html')
+
+@app.route("/login", methods=['get', 'post'])
+def process_user_login():
+    if request.method.__eq__('POST'):
+        usename = request.form.get('username')
+        password = request.form.get('password')
+
+        user = dao.authe_user(username=usename, password=password)
+
+        if user:
+            login_user(user=user)
+            #lay tren duong dan ve thi dung => .args
+            next = request.args.get('next')
+
+            return redirect('/' if next is None else next)
+
+    return render_template('login.html')
+
+
+@app.route('/logout')
+def process_user_logout():
+    logout_user()
+    return redirect('/login')
+
 
 @login.user_loader
 def get_user(user_id):

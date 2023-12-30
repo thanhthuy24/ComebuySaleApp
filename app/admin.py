@@ -33,10 +33,10 @@ class MyStatsView(BaseView):
         return self.render('admin/stats.html')
 
 class MyLogoutView(AuthenticatedUser):
-    @expose('/') #nạp domain nối đuôi tiếp
+    @expose("/") #nạp domain nối đuôi tiếp
     def index(self):
         logout_user()
-        return redirect('/admin')
+        return redirect('/')
 
 
 admin.add_view(MyCategoryView(Category, db.session))

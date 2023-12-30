@@ -1,35 +1,65 @@
 <nav class="navbar navbar-expand-sm bg-light navbar-light">
     <div class="container-fluid">
-        <ul class="navbar-nav">
-            <li class="nav-item">
-                <a class="nav-link active" href="/">
-                    <img src="https://theme.hstatic.net/200000421745/1000900421/14/logo__footer.png?v=152"/>
-                </a>
-            </li>
+        <a class="nav-link active" href="/">
+            <img src="https://theme.hstatic.net/200000421745/1000900421/14/logo__footer.png?v=152"/>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="collapsibleNavbar">
+            <ul class="navbar-nav me-auto">
 
-            <div class="header-mg">
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Giới thiệu</a>
-                </li>
-            </div>
-            {% for c in categories %}
-            <div class="header-mg">
-                <li class="nav-item">
-                    <a class="nav-link" href="/?cate_id={{c.id}}">{{c.name}}</a>
-                </li>
-            </div>
-            {% endfor %}
-            <div class="header-mg">
+                <!--            <li class="nav-item">-->
+                <!--                <a class="nav-link active" href="/">-->
+                <!--                    <img src="https://theme.hstatic.net/200000421745/1000900421/14/logo__footer.png?v=152"/>-->
+                <!--                </a>-->
+                <!--            </li>-->
+
+                <div class="header-mg">
                     <li class="nav-item">
-                    <a class="nav-link text-danger" href="/cart">&#128722; Giỏ hàng <span class="badge bg-danger cart-counter">{{ cart.total_quantity }}</span></a>
-                </li>
-            </div>
+                        <a class="nav-link" href="#">Giới thiệu</a>
+                    </li>
+                </div>
+                {% for c in categories %}
+                <div class="header-mg">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/?cate_id={{c.id}}">{{c.name}}</a>
+                    </li>
+                </div>
+                {% endfor %}
+                {% if current_user.is_authenticated %}
+                <div class="header-mg">
+                    <li class="nav-item">
+                        <p class="text-info">Chào {{ current_user.name }}!</p>
+                    </li>
+                </div>
+                    <div class="header-mg">
+                    <li class="nav-item">
+                        <a class="nav-link text-info" href="/logout">Đăng xuất</a>
+                    </li>
+                </div>
+                {%else%}
+                <div class="header-mg">
+                    <li class="nav-item">
+                        <a class="nav-link text-info" href="/login">Đăng nhập</a>
+                    </li>
+                </div>
+                {%endif%}
 
 
-        </ul>
-        <form class="d-flex" method="get" action="/">
-        <input class="form-control me-2" type="text" name="kw" placeholder="Search">
-        <button class="btn btn-primary" type="submit">Search</button>
-      </form>
+                <div class="header-mg">
+                    <li class="nav-item">
+                        <a class="nav-link text-danger" href="/cart">&#128722; Giỏ hàng <span
+                                class="badge bg-danger cart-counter">{{ cart.total_quantity }}</span></a>
+                    </li>
+                </div>
+
+
+            </ul>
+            <form class="d-flex" method="get" action="/">
+                <input class="form-control me-2" type="text" name="kw" placeholder="Search">
+                <button class="btn btn-primary" type="submit">Search</button>
+            </form>
+        </div>
     </div>
 </nav>

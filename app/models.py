@@ -42,7 +42,7 @@ class Product(db.Model):
     category_id = Column(Integer, ForeignKey(Category.id), nullable=False)
     image = Column(String(200))
 
-    receipt_details = relationship('ReceiptDetails', backref='product', lazy=True)
+    receipt_details = relationship('ReceiptDetails', backref='Product', lazy=True)
 
     def __str__(self):
         return self.name
@@ -52,60 +52,61 @@ class BaseModel(db.Model):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     active = Column(Boolean, default=True)
-    create_date = Column(DateTime)
+    create_date = Column(DateTime, default=datetime.now())
 
 class Receipt(BaseModel):
     user_id = Column(Integer, ForeignKey(User.id), nullable=True)
     receipt_details = relationship('ReceiptDetails', backref='receipt', lazy=True)
 
-class ReceiptDetails(db.Model):
+class ReceiptDetails(BaseModel):
     quantity = Column(Integer, default=0)
     price = Column(Float, default=0)
-
-    #khoa ngoaij=
-    receipt_id = Column(Receipt, ForeignKey(Receipt.id), nullable=False)
-    product_id = Column(Product, ForeignKey(Product.id), nullable=False)
+    receipt_id = Column(Integer, ForeignKey(Receipt.id), nullable=False)
+    product_id = Column(Integer, ForeignKey(Product.id), nullable=False)
 
 if __name__ == '__main__':
     with app.app_context():
 
         db.create_all()
-
+        #
         import hashlib
-        u = User(name='Admin', username='admin', password=str(hashlib.md5('123'.encode('utf-8')).hexdigest()),
-                 user_role=UserRoleEnum.ADMIN)
-        u1 = User(name='ThuyHo', username='thuy24', password=str(hashlib.md5('123'.encode('utf-8')).hexdigest()))
-        db.session.add(u)
+        # u = User(name='Admin', username='admin', password=str(hashlib.md5('123'.encode('utf-8')).hexdigest()),
+        #          user_role=UserRoleEnum.ADMIN)
+        u1 = User(name='ThuyHo', username='thuy24', password=str(hashlib.md5('123'.encode('utf-8')).hexdigest()),
+                  user_role=UserRoleEnum.USER)
+        # u2 = User(name='ABC', username='abcadmin', password=str(hashlib.md5('12345'.encode('utf-8')).hexdigest()),
+        #          user_role=UserRoleEnum.ADMIN)
+        db.session.add(u1)
         db.session.commit()
         #
-        c1 = Category(name='Trà Sữa')
-        c2 = Category(name='Trà Tươi')
-
-        db.session.add(c1)
-        db.session.add(c2)
-        db.session.commit()
-
-        p1 = Product(name='Trà sữa Signature', price='53000', category_id=1,
-                     image="https://product.hstatic.net/200000421745/product/ts_signature_da473adc7fcc4d1d8c4d6378adc1f114_large.png")
-
-        p2 = Product(name='Lục trà hoàng kim', price='53000', category_id=1,
-                     image="https://product.hstatic.net/200000421745/product/luc_tra_hoang_kim_4b2ef28d7cc04db0a47c0587e05f8963_large.png")
-
-        p3 = Product(name='Trà sữa hải thần', price='59000', category_id=1,
-                     image="https://product.hstatic.net/200000421745/product/ts_hai_than_66599a9e451c47a9a637b41d0289d21c_large.png")
-
-        p4 = Product(name='Trà hải thần', price='55000', category_id=2,
-                     image="https://product.hstatic.net/200000421745/product/tra_hai_than_6c17ef2fee4d4472ac5c8f082654d9f1_large.png")
-
-        p5 = Product(name='Trà Hoa Hồng Pu’re', price='59000', category_id=2,
-                     image="https://product.hstatic.net/200000421745/product/tra_hoa_hong_b8ff8585af4d4ee0b2e932ef5ce29704_large.png")
-
-        p6 = Product(name='Trà Oolong Đào Mật Ong', price='55000', category_id=2,
-                     image="https://product.hstatic.net/200000421745/product/tra_oolong_dao_mat_ong_6c76ab8ce2714626aebd4c4ba6083414_large.png")
-
-        p7 = Product(name='Trà Hoa Quế Tứ Quý Xuân', price='62000', category_id=2,
-                     image="https://product.hstatic.net/200000421745/product/tra_hoa_que_tu_quy_xuan_1680a739763141fb854e63cb44bf1076_large.png")
-
-        db.session.add_all([p1, p2, p3, p4, p5, p6, p7])
-        db.session.commit()
-
+        # c1 = Category(name='Trà Sữa')
+        # c2 = Category(name='Trà Tươi')
+        #
+        # db.session.add(c1)
+        # db.session.add(c2)
+        # db.session.commit()
+        #
+        # p1 = Product(name='Trà sữa Signature', price='53000', category_id=1,
+        #              image="https://product.hstatic.net/200000421745/product/ts_signature_da473adc7fcc4d1d8c4d6378adc1f114_large.png")
+        #
+        # p2 = Product(name='Lục trà hoàng kim', price='53000', category_id=1,
+        #              image="https://product.hstatic.net/200000421745/product/luc_tra_hoang_kim_4b2ef28d7cc04db0a47c0587e05f8963_large.png")
+        #
+        # p3 = Product(name='Trà sữa hải thần', price='59000', category_id=1,
+        #              image="https://product.hstatic.net/200000421745/product/ts_hai_than_66599a9e451c47a9a637b41d0289d21c_large.png")
+        #
+        # p4 = Product(name='Trà hải thần', price='55000', category_id=2,
+        #              image="https://product.hstatic.net/200000421745/product/tra_hai_than_6c17ef2fee4d4472ac5c8f082654d9f1_large.png")
+        #
+        # p5 = Product(name='Trà Hoa Hồng Pu’re', price='59000', category_id=2,
+        #              image="https://product.hstatic.net/200000421745/product/tra_hoa_hong_b8ff8585af4d4ee0b2e932ef5ce29704_large.png")
+        #
+        # p6 = Product(name='Trà Oolong Đào Mật Ong', price='55000', category_id=2,
+        #              image="https://product.hstatic.net/200000421745/product/tra_oolong_dao_mat_ong_6c76ab8ce2714626aebd4c4ba6083414_large.png")
+        #
+        # p7 = Product(name='Trà Hoa Quế Tứ Quý Xuân', price='62000', category_id=2,
+        #              image="https://product.hstatic.net/200000421745/product/tra_hoa_que_tu_quy_xuan_1680a739763141fb854e63cb44bf1076_large.png")
+        #
+        # db.session.add_all([p1, p2, p3, p4, p5, p6, p7])
+        # db.session.commit()
+        #
